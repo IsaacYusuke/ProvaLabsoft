@@ -5,12 +5,22 @@ const SeatReservations = () => {
   const [seats, setSeats] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/seats')
-      .then(response => {
-        setSeats(response.data);
-      })
-      .catch(error => console.error('Error fetching seats:', error));
+    fetchSeats();
   }, []);
+
+  const fetchSeats = () => {
+    axios.get('http://localhost:8000/seats')
+      .then(response => setSeats(response.data))
+      .catch(error => console.error('Error fetching seats:', error));
+  };
+
+  const reserveSeat = (seatId) => {
+    axios.patch(`http://localhost:8000/seats/${seatId}/reserve/`)
+      .then(() => {
+        fetchSeats();  // Re-fetch seats to update the UI
+      })
+      .catch(error => console.error('Error reserving seat:', error));
+  };
 
   return (
     <div style={styles.seatsContainer}>
@@ -19,11 +29,9 @@ const SeatReservations = () => {
           <p>Seat Number: {seat.seat_number}</p>
           <p>Row: {seat.rownumber}</p>
           {seat.section_name && <p>Section: {seat.section_name}</p>}
-          {seat.is_available ? (
-            <button onClick={() => alert('Reserve Seat')}>Reserve</button>
-          ) : (
-            <p style={styles.unavailable}>Unavailable</p>
-          )}
+          <button onClick={() => reserveSeat(seat.id)} disabled={!seat.is_available}>
+            {seat.is_available ? 'Reserve' : 'Unavailable'}
+          </button>
         </div>
       ))}
     </div>
@@ -41,9 +49,6 @@ const styles = {
     padding: '10px',
     margin: '10px',
     width: '200px'
-  },
-  unavailable: {
-    color: 'red'
   }
 };
 
