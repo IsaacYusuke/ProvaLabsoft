@@ -5,35 +5,46 @@ const SeatReservations = () => {
   const [seats, setSeats] = useState([]);
 
   useEffect(() => {
-    axios.get('http://your-api-url.com/seats')
+    axios.get('http://localhost:8000/seats')
       .then(response => {
         setSeats(response.data);
       })
-      .catch(error => console.log(error));
+      .catch(error => console.error('Error fetching seats:', error));
   }, []);
 
-  const reserveSeat = (seatId) => {
-    axios.patch(`http://your-api-url.com/seats/${seatId}`, { is_available: false })
-      .then(response => {
-        alert('Seat reserved!');
-        // Atualiza a lista de assentos após a reserva
-        setSeats(seats.map(seat => seat.id === seatId ? { ...seat, is_available: false } : seat));
-      })
-      .catch(error => console.log(error));
-  };
-
   return (
-    <div>
-      {seats.map(seat => (
-        <div key={seat.id}>
-          <p>{`Seat Number: ${seat.seat_number} - Available: ${seat.is_available ? 'Yes' : 'No'}`}</p>
-          {seat.is_available && (
-            <button onClick={() => reserveSeat(seat.id)}>Reserve</button>
+    <div style={styles.seatsContainer}>
+      {seats.map((seat) => (
+        <div key={seat.id} style={styles.seat}>
+          <p>Seat Number: {seat.seat_number}</p>
+          <p>Row: {seat.rownumber}</p>
+          {seat.section_name && <p>Section: {seat.section_name}</p>}
+          {seat.is_available ? (
+            <button onClick={() => alert('Reserve Seat')}>Reserve</button>
+          ) : (
+            <p style={styles.unavailable}>Unavailable</p>
           )}
         </div>
       ))}
     </div>
   );
+};
+
+const styles = {
+  seatsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around'
+  },
+  seat: {
+    border: '1px solid black',
+    padding: '10px',
+    margin: '10px',
+    width: '200px'
+  },
+  unavailable: {
+    color: 'red'
+  }
 };
 
 export default SeatReservations;
