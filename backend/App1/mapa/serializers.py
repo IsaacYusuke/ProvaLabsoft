@@ -17,6 +17,10 @@ class RowSerializer(serializers.ModelSerializer):
         fields = ['id', 'row_number', 'section']
 
 class SeatSerializer(serializers.ModelSerializer):
+    section_name = serializers.CharField(source='row.section.name', read_only=True)
+    rownumber = serializers.CharField(source='row.row_number', read_only=True)
+
     class Meta:
         model = Seat
-        fields = ['id', 'seat_number', 'is_available', 'row']
+        fields = ['id', 'seat_number', 'rownumber', 'is_available', 'section_name']
+
