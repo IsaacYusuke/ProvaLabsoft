@@ -8,14 +8,17 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
+@method_decorator(csrf_exempt, name='dispatch')
 class StadiumViewSet(viewsets.ModelViewSet):
     queryset = Stadium.objects.all()
     serializer_class = StadiumSerializer
 
+@method_decorator(csrf_exempt, name='dispatch')
 class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
     serializer_class = SectionSerializer
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RowViewSet(viewsets.ModelViewSet):
     queryset = Row.objects.all()
     serializer_class = RowSerializer
